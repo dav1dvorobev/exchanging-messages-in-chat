@@ -8,34 +8,33 @@
 void clientHandler(SocketShell clientSocket){
     std::string login;
     std::string password;
+    int idx = -1;
     while(true){
-        readString(clientSocket, login);
-        readString(clientSocket, password);
         try{
-            if(cheak(login, password)){
-                sendString(clientSocket, "accept");
-                break;
-            }
-            else{sendString(clientSocket, "wrong password");}
-        }catch(std::exception& e){sendString(clientSocket, e.what());}
+            login = readString(clientSocket);
+            password = readString(clientSocket);
+        }catch(...){return;}
+        std::string cur_status = status(login, password);
+        sendString(clientSocket, cur_status);
+        if(cur_status == "accept"){
+            std::lock_guard<std::mutex> lock(global::clientMutex);
+            preload_history(clientSocket);
+            global::clients.push_back({login, clientSocket});
+            idx += global::clients.size();
+            break;
+        }
     }
-    preload(clientSocket);
-    global::clients.push_back({login, clientSocket});
-    size_t current = global::clients.size() - 1;
     sendClients(login + GREEN + " connected" + RESET);
     try{
         while(true){
-            std::string message;
-            if(readString(global::clients[current], message) == 0){
-                closeSocket(global::clients[current]);
-                global::clients.erase(global::clients.begin() + current);
-                sendClients(login + RED + " disconnected" + RESET);
-                break;
-            }
+            std::string message = readString(clientSocket);
             sendClients(login + ": " + message);
         }
-    }catch(std::exception& e){
-        logging(e.what(), LOGGING_PATH);
+    }catch(...){
+        global::clientMutex.lock();
+            global::clients.erase(global::clients.begin() + idx);
+        global::clientMutex.unlock();
+        sendClients(login + RED + " disconnected" + RESET);
     }
 }
 int main(){
@@ -50,6 +49,7 @@ int main(){
         }
     } catch(std::exception& e){
         logging(e.what(), LOGGING_PATH);
+        throw;
     }
     return 0;
 } 
