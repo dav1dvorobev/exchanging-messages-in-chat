@@ -24,24 +24,17 @@ public:
     }
     operator int() const{return _clientSocket;}
 };
-void closeSocket(SocketShell __fd){
-    if(__fd != -1){ 
-        close(__fd);
+std::string readString(const SocketShell& __fd){
+    char input[MESSAGE_SIZE] = "\0";
+    int bytesRead = recv(__fd, input, MESSAGE_SIZE, 0);
+    if(bytesRead <= 0){
+        throw std::runtime_error("[ERROR] FAILED READ");
     }
+    return std::string(input);
 }
-int readString(const SocketShell& __fd, std::string& __buf){
-    char __input[MESSAGE_SIZE] = "\0";
-    int bytesRead = read(__fd, __input, MESSAGE_SIZE);
-    if(bytesRead == -1){
-        throw std::runtime_error("[ERROR] FAILED READING");
-    }
-    __buf = __input;
-    return bytesRead;
-}
-int sendString(const SocketShell& __fd, const std::string& __buf){
-    int bytesSend = write(__fd, __buf.c_str(), __buf.size());
+void sendString(const SocketShell& __fd, const std::string& __buf){
+    int bytesSend = send(__fd, __buf.c_str(), __buf.size(), 0);
     if(bytesSend == -1){
-        throw std::runtime_error("[ERROR] FAILED SENDING");
+        throw std::runtime_error("[ERROR] FAILED SEND");
     }
-    return bytesSend;
 }
