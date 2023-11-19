@@ -44,9 +44,9 @@ int main(int argc, char** argv){
         while(true){
             input(buf);
             if(buf == "!q"){break;}
-            std::cout << UP;
+            std::cout << MOVE_UP;
             if(validation(buf)){sendString(clientSocket, buf);}
-            else{std::cout << CLEAR_LINE << RED << "validation error" << RESET << ENDL;}
+            else{std::cout << CLEAR_LINE << setColor("validation error", {255, 0, 0}) << ENDL;}
         }
         close(clientSocket);
     }catch(std::exception& e){

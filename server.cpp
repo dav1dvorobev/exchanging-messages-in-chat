@@ -13,18 +13,23 @@ void clientHandler(SocketShell clientSocket){
         try{
             login = readString(clientSocket);
             password = readString(clientSocket);
-        }catch(...){return;}
+        }catch(...){
+            close(clientSocket);
+            return;
+        }
         std::string cur_status = status(login, password);
         sendString(clientSocket, cur_status);
         if(cur_status == "accept"){
-            std::lock_guard<std::mutex> lock(global::clientMutex);
+            global::clientMutex.lock();
             preload_history(clientSocket);
             global::clients.push_back({login, clientSocket});
             idx += global::clients.size();
+            global::clientMutex.unlock();
             break;
         }
     }
-    sendClients(login + GREEN + " connected" + RESET);
+    login = setColorRandom(login);
+    sendClients(login + setColor(" connected", {0, 255, 0}));
     try{
         while(true){
             std::string message = readString(clientSocket);
@@ -32,9 +37,10 @@ void clientHandler(SocketShell clientSocket){
         }
     }catch(...){
         global::clientMutex.lock();
-            global::clients.erase(global::clients.begin() + idx);
+        close(clientSocket);
+        global::clients.erase(global::clients.begin() + idx);
         global::clientMutex.unlock();
-        sendClients(login + RED + " disconnected" + RESET);
+        sendClients(login + setColor(" disconnected", {255, 0, 0}));
     }
 }
 int main(){
