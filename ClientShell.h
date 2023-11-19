@@ -18,13 +18,11 @@ namespace global{
     std::vector<ClientShell> clients;
 }
 std::string status(const std::string& __login, const std::string& __password){
-    global::clientMutex.lock();
     for(auto client : global::clients){
         if(client.login == __login){
             return setColor("already online", {255, 0, 0});
         }
     }
-    global::clientMutex.unlock();
     std::ifstream file("users.json");
     json users = json::parse(file);
     file.close();
