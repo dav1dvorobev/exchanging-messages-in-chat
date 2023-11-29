@@ -49,13 +49,19 @@ int main(int argc, char** argv) {
 }
 
 void readFromServer(SocketShell clientSocket) {
-    while (!terminateReadFromServer.load()) {
-        std::string message = readString(clientSocket);
-        std::cout << CLEAR_LINE << message;
-        if (!buf.empty()) {
-            std::cout << buf;
-            std::cout.flush();
+    try {
+        while (!terminateReadFromServer.load()) {
+            std::string message = readString(clientSocket);
+            std::cout << CLEAR_LINE << message;
+            if (!buf.empty()) {
+                std::cout << buf;
+                std::cout.flush();
+            }
         }
+    }
+    catch (...) {
+        close(clientSocket);
+        return;
     }
 }
 bool handleAuthorization(SocketShell clientSocket, const int& preload_history) {
