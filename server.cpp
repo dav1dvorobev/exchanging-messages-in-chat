@@ -8,7 +8,6 @@
 void clientHandler(SocketShell clientSocket) {
     std::string login;
     std::string password;
-    int idx = -1;
     while (true) {
         try {
             login = readString(clientSocket);
@@ -24,7 +23,6 @@ void clientHandler(SocketShell clientSocket) {
             global::clientMutex.lock();
             preload_history(clientSocket);
             global::clients.push_back({ login, clientSocket });
-            idx += global::clients.size();
             global::clientMutex.unlock();
             break;
         }
@@ -40,7 +38,15 @@ void clientHandler(SocketShell clientSocket) {
     catch (...) {
         global::clientMutex.lock();
         close(clientSocket);
-        global::clients.erase(global::clients.begin() + idx);
+        // global::clients.erase(global::clients.begin() + idx);
+
+        auto it = std::find_if(global::clients.begin(), global::clients.end(), [&](const ClientShell& client) {
+            return client.clientSocket == clientSocket; // Directly compare each client's socket to the socket we're looking for
+            });
+        if (it != global::clients.end()) {
+            global::clients.erase(it);
+        }
+
         global::clientMutex.unlock();
         sendClients(login + setColor(" disconnected", { 255, 0, 0 }));
     }
