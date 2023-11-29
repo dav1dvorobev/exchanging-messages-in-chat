@@ -1,6 +1,26 @@
-{   
-    "admin" : "admin",
-    "thedeepestreality" : "5y3k",
-    "spogozhev" : "uts7d",
-    "dav1dvorobev": "q8hp7"
+{
+    "admin": {
+        "color": "red",
+        "password": "admin"
+    },
+    "damikh": {
+        "color": "magenta",
+        "password": "lkm"
+    },
+    "dav1dvorobev": {
+        "color": "yellow",
+        "password": "q8hp7"
+    },
+    "spogozhev": {
+        "color": "green",
+        "password": "uts7d"
+    },
+    "thedeepestreality": {
+        "color": "orange",
+        "password": "5y3k"
+    },
+    "user1": {
+        "color": "bright pink",
+        "password": "pass"
+    }
 }
