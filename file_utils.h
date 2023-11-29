@@ -146,5 +146,15 @@ std::string setColorRandom(const std::string& __buf) {
         B = rand() % 256;
     return setColor(__buf, { R, G, B });
 }
+std::string getLoginWithColor(const std::string& __login, std::map<std::string, std::vector<size_t>>& __colors) {
+    std::ifstream file("users.json");
+    if (!file) {
+        std::cerr << "Cannot open database file users.json" << std::endl;
+        return __login;
+    }
+    nlohmann::json users = nlohmann::json::parse(file);
+    file.close();
+    return setColor(__login, __colors[users[__login]["color"]]);
+}
 
 #endif // !FILE_UTILS_H
