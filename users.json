@@ -3,10 +3,6 @@
         "color": "red",
         "password": "admin"
     },
-    "damikh": {
-        "color": "magenta",
-        "password": "lkm"
-    },
     "dav1dvorobev": {
         "color": "yellow",
         "password": "q8hp7"
@@ -18,9 +14,5 @@
     "thedeepestreality": {
         "color": "orange",
         "password": "5y3k"
-    },
-    "user1": {
-        "color": "bright pink",
-        "password": "pass"
     }
 }
