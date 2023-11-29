@@ -5,6 +5,7 @@
 using json = nlohmann::json;
 
 std::string buf;
+std::atomic<bool> terminateReadFromServer(false);
 
 void readFromServer(SocketShell clientSocket);
 bool handleAuthorization(SocketShell clientSocket, const int& preload_history);
@@ -29,11 +30,15 @@ int main(int argc, char** argv) {
         readThread.detach();
         while (true) {
             input(buf);
-            if (buf == "!q") { break; }
+            if (buf == "!q") {
+                terminateReadFromServer.store(true); // so that readThread can exit
+                break;
+            }
             std::cout << MOVE_UP;
             if (validation(buf)) { sendString(clientSocket, buf); }
             else { std::cout << CLEAR_LINE << setColor("validation error", { 255, 0, 0 }) << ENDL; }
         }
+
         close(clientSocket);
     }
     catch (std::exception& e) {
@@ -44,7 +49,7 @@ int main(int argc, char** argv) {
 }
 
 void readFromServer(SocketShell clientSocket) {
-    while (true) {
+    while (!terminateReadFromServer.load()) {
         std::string message = readString(clientSocket);
         std::cout << CLEAR_LINE << message;
         if (!buf.empty()) {
