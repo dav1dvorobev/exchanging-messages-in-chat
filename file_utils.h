@@ -11,6 +11,11 @@
 #include <ctime>
 #include <mutex>
 
+#ifdef __APPLE__
+#include <termios.h>
+#include <unistd.h>
+#endif
+
 #define BLINK "\x1B[5m"
 #define CLEAR_LINE "\r\x1B[K"
 #define MOVE_UP "\x1B[1A"
