@@ -50,11 +50,13 @@ bool validation(const std::string& __buf) {
     return true;
 }
 void input(std::string& __buf, const char* __mode = "default") {
+#ifndef __APPLE__ // If not macOS
     char input = '\0';
     __buf.clear();
+
     system("stty raw");
     while ((input = std::cin.get()) != '\r') {
-        if (strcmp(__mode, "hidden") == 0) { std::cerr << "\b*"; }
+        if (strcmp(__mode, "hidden") == 0) { std::cout << "\b*"; }
         if (input == '\177') {
             std::cout << "\b\b  \b\b";
             if (!__buf.empty()) {
@@ -67,6 +69,56 @@ void input(std::string& __buf, const char* __mode = "default") {
     system("stty cooked");
     while (__buf.back() == ' ') { __buf.pop_back(); }
     std::cout << "\b\b  \b\b\r\n";
+#else // If macOS
+    std::cout << std::flush;
+
+    __buf.clear();
+
+    termios old_terminal_settings; // Save the old terminal settings
+    tcgetattr(STDIN_FILENO, &old_terminal_settings);
+    termios new_teriman_settings = old_terminal_settings;
+
+    if (std::string(__mode) == "hidden") {
+        new_teriman_settings.c_lflag &= ~(ECHO | ICANON); // Turn off echoing and enable non-canonical mode
+    }
+    else {
+        new_teriman_settings.c_lflag |= ICANON; // Canonical mode for normal input
+    }
+
+    tcsetattr(STDIN_FILENO, TCSANOW, &new_teriman_settings);
+
+    char ch;
+    while (read(STDIN_FILENO, &ch, 1) && ch != '\n') {
+        if (ch == '\x7f' || ch == '\b') { // Handle backspace
+            if (!__buf.empty()) {
+                __buf.pop_back();
+                std::cout << "\b \b" << std::flush; // Move back, print space, move back again, and flush
+            }
+        }
+        else {
+            __buf.push_back(ch);
+            if (std::string(__mode) == "hidden") {
+                std::cout << '*' << std::flush;
+            }
+            else {
+                std::cout << ch << std::flush;
+            }
+        }
+    }
+
+    // Don't print a new line for non-hidden mode
+    if (std::string(__mode) != "hidden") {
+        std::cout << "\r" << std::flush; // Return the cursor to the start of the line
+        std::cout << "\x1B[0K"; // Clear the line from the cursor to the end
+        std::cout << std::flush;
+    }
+    else {
+        std::cout << std::endl;
+    }
+
+    // Restore the old settings
+    tcsetattr(STDIN_FILENO, TCSANOW, &old_terminal_settings);
+#endif
 }
 std::string input(const char* __mode = "default") {
     std::string __buf;
