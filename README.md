@@ -145,9 +145,9 @@ sudo apt-get install nlohmann-json3-dev
 
 После успешной установки библиотеки, вы сможете последовательно запустить серверную и клиентскую часть.
 ```bash
-g++ server.cpp -o server -pthread && ./server
+cd src/ && g++ server.cpp -o server -pthread && ./server
 ```
 ```bash
-g++ client.cpp -o client -pthread && ./client
+cd src/ && g++ client.cpp -o client -pthread && ./client
 ```
 Убедитесь, что все необходимые компоненты установлены, и следуйте инструкциям в консоли для входа в чат и начала обмена сообщениями.
