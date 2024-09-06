@@ -1,9 +1,10 @@
-#pragma once
+#ifndef SERVERSOCKET
+#define SERVERSOCKET
+
 #include <netinet/ip.h>
 #include <sys/socket.h>
-#include <unistd.h>
-
 #include <stdexcept>
+#include <unistd.h>
 
 class ServerSocket {
     int _port;
@@ -42,3 +43,5 @@ public:
         }
     }
 };
+
+#endif // SERVERSOCKET

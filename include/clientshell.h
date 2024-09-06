@@ -1,23 +1,27 @@
-#pragma once
+#ifndef CLIENTSHELL
+#define CLIENTSHELL
+
 #include <nlohmann/json.hpp>
 
-#include "SocketShell.h"
-#include "file_utils.h"
+#include "socketshell.h"
+#include "utils.h"
 
 using json = nlohmann::json;
 
 struct ClientShell {
     std::string login;
     SocketShell clientSocket;
-    ClientShell(std::string login, SocketShell clientSocket) : login(login), clientSocket(clientSocket) {}
+    ClientShell(std::string login, SocketShell clientSocket)
+        : login(login), clientSocket(clientSocket) {}
     operator SocketShell() const { return clientSocket; }
 };
 
 namespace global {
-    std::mutex clientMutex;
-    std::mutex historyMutex;
-    std::vector<ClientShell> clients;
+std::mutex clientMutex;
+std::mutex historyMutex;
+std::vector<ClientShell> clients;
 } // namespace global
+
 std::string status(const std::string& __login, const std::string& __password) {
     for (auto client : global::clients) {
         if (client.login == __login) { return setColor("already online", {255, 0, 0}); }
@@ -40,7 +44,9 @@ void preload_history(const SocketShell& __clientSocket) {
     int idx = 0;
     while (!history.eof()) { std::getline(history, buf[idx++ % counter]); }
     for (int i = 0; i < counter; ++i) {
-        if (!buf[(idx + i) % counter].empty()) { sendString(__clientSocket, buf[(idx + i) % counter] + ENDL); }
+        if (!buf[(idx + i) % counter].empty()) {
+            sendString(__clientSocket, buf[(idx + i) % counter] + ENDL);
+        }
     }
     delete[] buf;
     history.close();
@@ -57,3 +63,5 @@ void sendClients(const std::string& __buf) {
     for (auto client : global::clients) { sendString(client, __buf + ENDL); }
     global::clientMutex.unlock();
 }
+
+#endif // CLIENTSHELL

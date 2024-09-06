@@ -1,10 +1,11 @@
-#pragma once
-#include <arpa/inet.h>
+#ifndef SOCKETSHELL
+#define SOCKETSHELL
+
 #include <netinet/ip.h>
 #include <sys/socket.h>
-#include <unistd.h>
-
+#include <arpa/inet.h>
 #include <stdexcept>
+#include <unistd.h>
 
 #define MESSAGE_SIZE 1024
 
@@ -18,7 +19,8 @@ public:
         serverAddres.sin_family = AF_INET;
         serverAddres.sin_port = htons(__port);
         serverAddres.sin_addr.s_addr = inet_addr(__address.c_str());
-        if (connect(_clientSocket, (sockaddr*)&serverAddres, sizeof(serverAddres)) == -1) {
+        if (connect(_clientSocket, (sockaddr*)&serverAddres,
+                    sizeof(serverAddres)) == -1) {
             close(_clientSocket);
             throw std::runtime_error("[ERROR] FAILED CONNECT");
         }
@@ -35,3 +37,5 @@ void sendString(const SocketShell& __fd, const std::string& __buf) {
     int bytesSend = send(__fd, __buf.c_str(), __buf.size(), 0);
     if (bytesSend == -1) { throw std::runtime_error("[ERROR] FAILED SEND"); }
 }
+
+#endif // SOCKETSHELL

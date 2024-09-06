@@ -1,7 +1,7 @@
 #include <nlohmann/json.hpp>
 
-#include "../include/SocketShell.h"
-#include "../include/file_utils.h"
+#include "../include/socketshell.h"
+#include "../include/utils.h"
 
 using json = nlohmann::json;
 

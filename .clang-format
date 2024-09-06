@@ -1,0 +1,22 @@
+---
+Language: Cpp
+BasedOnStyle: Google
+IndentWidth: 4
+UseTab: Never
+ColumnLimit: 100
+AlignOperands: true
+PointerAlignment: Left
+AccessModifierOffset: -4
+SortIncludes: false
+IncludeBlocks: Regroup
+SpacesBeforeTrailingComments: 1
+AlignConsecutiveAssignments: true
+AllowShortLoopsOnASingleLine: true
+AlignConsecutiveAssignments: None
+AllowShortBlocksOnASingleLine: true
+EmptyLineBeforeAccessModifier: Never
+SpaceBeforeAssignmentOperators: true
+AllowShortFunctionsOnASingleLine: true
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortIfStatementsOnASingleLine: true
+AllowShortIfStatementsOnASingleLine: AllIfsAndElse

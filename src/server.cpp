@@ -1,6 +1,6 @@
-#include "../include/ClientShell.h"
-#include "../include/ServerSocket.h"
-#include "../include/file_utils.h"
+#include "../include/serversocket.h"
+#include "../include/clientshell.h"
+#include "../include/utils.h"
 
 #define PORT 8080
 #define LOGGING_PATH "server.log"
